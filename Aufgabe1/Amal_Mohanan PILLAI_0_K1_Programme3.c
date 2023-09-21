@@ -56,15 +56,44 @@ int main() {
     head->next->next->next->next->data = 34;
     head->next->next->next->next->next = NULL;
 
-    printf("Original List:\n");
-    printData(head);
+    int choice;
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Print the original list\n");
+        printf("2. Insert nodes\n");
+        printf("3. Replace nodes by zero\n");
+        printf("4. Print the final list\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
 
-    operations(head);
-
-    printf("Final List:\n");
-    printData(head);
-
-    return 0;
+        switch (choice) {
+            case 1:
+                printf("Original List:\n");
+                printData(head);
+                break;
+            case 2:
+                insert(head, 7, 4);
+                break;
+            case 3:
+                replaceByZero(head, 7, 4);
+                break;
+            case 4:
+                printf("Final List:\n");
+                printData(head);
+                break;
+            case 5:
+                // Free the memory used by the nodes and exit
+                while (head != NULL) {
+                    struct Node* temp = head;
+                    head = head->next;
+                    free(temp);
+                }
+                return 0;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
 }
 
 void printData(struct Node* pntr) {
@@ -73,7 +102,5 @@ void printData(struct Node* pntr) {
         printf("%d -> ", pntr->data);
         pntr = pntr->next;
     }
-    printf("\n"); // Add a newline character for formatting
+    printf("NULL\n");
 }
-
-

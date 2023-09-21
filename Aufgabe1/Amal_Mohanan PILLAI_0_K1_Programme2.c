@@ -40,9 +40,6 @@ void removeLargest(struct Node** head) {
         *head = biggest->next;
     }
 
-    printf("List after removing largest: ");
-    printData(*head);
-
     free(biggest);
 }
 
@@ -59,18 +56,38 @@ int main() {
     head->next->next->next->next->data = 34;
     head->next->next->next->next->next = NULL;
 
-    printf("Original List: ");
-    printData(head);
+    int choice;
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Print the original list\n");
+        printf("2. Remove the largest element\n");
+        printf("3. Print the list after removing\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
 
-    removeLargest(&head);
-
-    // Free the memory used by the remaining nodes
-    struct Node* current = head;
-    while (current != NULL) {
-        struct Node* temp = current;
-        current = current->next;
-        free(temp);
+        switch (choice) {
+            case 1:
+                printf("Original List: ");
+                printData(head);
+                break;
+            case 2:
+                removeLargest(&head);
+                break;
+            case 3:
+                printf("List after removing largest: ");
+                printData(head);
+                break;
+            case 4:
+                // Free the memory used by the remaining nodes
+                while (head != NULL) {
+                    struct Node* temp = head;
+                    head = head->next;
+                    free(temp);
+                }
+                return 0;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
     }
-
-    return 0;
 }

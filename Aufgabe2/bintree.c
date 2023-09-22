@@ -1,17 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//TASK 1
 struct node {
     int data;
     struct node* left;
     struct node* right;
 };
-
 struct node* bintreeCreate(int data);
 struct node* insert(struct node* root, int data);
 void printTree(struct node* root);
 void freeTree(struct node* root);
 void displayMenu();
+
+//TASK 2
+struct deque {
+    int data;
+    int *front;
+    int *back;
+};
+
+void insertVorne() {
+    
+}
 
 int main() {
     struct node* root = NULL;

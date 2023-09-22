@@ -10,6 +10,7 @@ struct node {
 struct node* bintreeCreate(int data);
 struct node* insert(struct node* root, int data);
 void printTree(struct node* root);
+void freeTree(struct node* root);
 void displayMenu();
 
 int main() {
@@ -33,17 +34,17 @@ int main() {
                 printf("\n");
                 break;
             case 3:
+                printf("Freeing the binary tree...\n");
+                freeTree(root);
+                printf("Exiting program.\n");
+                break;
+            case 4:
                 printf("Exiting program.\n");
                 break;
             default:
                 printf("Invalid choice. Please try again.\n");
         }
-    } while (choice != 3);
-
-    // Free the allocated memory when done with the tree
-    // You can write a separate function to free the entire tree
-    // but for simplicity, we'll just free the root node here.
-    free(root);
+    } while (choice != 4);
 
     return 0;
 }
@@ -52,7 +53,8 @@ void displayMenu() {
     printf("\nMenu:\n");
     printf("1. Insert a node into the binary tree\n");
     printf("2. Print the binary tree\n");
-    printf("3. Exit\n");
+    printf("3. Free the binary tree\n");
+    printf("4. Exit\n");
 }
 
 struct node* bintreeCreate(int data) {
@@ -86,5 +88,13 @@ void printTree(struct node* root) {
         printTree(root->left);
         printf("%d ", root->data);
         printTree(root->right);
+    }
+}
+
+void freeTree(struct node* root) {
+    if (root != NULL) {
+        freeTree(root->left);
+        freeTree(root->right);
+        free(root);
     }
 }

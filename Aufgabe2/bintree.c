@@ -7,16 +7,9 @@ struct node {
     struct node* right;
 };
 
-// Function to create a new node with the given data and initialize left and right pointers
 struct node* bintreeCreate(int data);
-
-// Function to insert a node into the binary tree
 struct node* insert(struct node* root, int data);
-
-// Function to print the binary tree (inorder traversal)
 void printTree(struct node* root);
-
-// Function to display the menu
 void displayMenu();
 
 int main() {

@@ -8,17 +8,33 @@ struct Bintree {
     struct Bintree* right;
 };
 
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct Deque {
+    Node* front;
+    Node* back;
+} Deque;
+
 // Function Declarations
 struct Bintree* insert(struct Bintree* root, int data);
 void search(struct Bintree* root, int s_data);
 void printTree(struct Bintree* root);
 void freeTree(struct Bintree* root);
-void displayMenu(struct Bintree** root);
+void displayMenu(struct Bintree** root, Deque* deque);
+void insertFront(Deque* deque, int data);
+void insertIntoDequeInInterval(struct Bintree* root, Deque* deque, int a, int b);
+void printDeque(Deque* deque);
 
 // Main Function
 int main() {
     struct Bintree* root = NULL;
-    displayMenu(&root);
+    Deque deque; // Create a deque
+    deque.front = NULL;
+    deque.back = NULL;
+    displayMenu(&root, &deque);
     return 0;
 }
 
@@ -71,8 +87,45 @@ void freeTree(struct Bintree* root) {
     }
 }
 
-void displayMenu(struct Bintree** root) {
-    int choice, data, searchValue;
+void insertFront(Deque* deque, int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return;
+    }
+    newNode->data = data;
+    newNode->next = deque->front;
+    deque->front = newNode;
+    if (deque->back == NULL) {
+        deque->back = newNode;
+    }
+}
+
+void insertIntoDequeInInterval(struct Bintree* root, Deque* deque, int a, int b) {
+    if (root == NULL) {
+        return;
+    }
+
+    if (root->data >= a && root->data <= b) {
+        insertFront(deque, root->data);
+    }
+
+    insertIntoDequeInInterval(root->left, deque, a, b);
+    insertIntoDequeInInterval(root->right, deque, a, b);
+}
+
+void printDeque(Deque* deque) {
+    Node* current = deque->front;
+    printf("Deque elements: ");
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void displayMenu(struct Bintree** root, Deque* deque) {
+    int choice, data, searchValue, upperBound;
+    int a, b; // Declare 'a' and 'b' here
 
     do {
         printf("\nASSIGNMENT II - TREE\n");
@@ -80,7 +133,10 @@ void displayMenu(struct Bintree** root) {
         printf("2. Print Tree (Inorder Traversal)\n");
         printf("3. Search for value\n");
         printf("4. Free Tree\n");
-        printf("5. Exit\n");
+        printf("5. Insert numbers in interval [a, b] into Deque\n");
+        printf("6. Insert numbers in interval [0, b] into Deque\n");
+        printf("7. Print Deque\n");
+        printf("8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -111,10 +167,28 @@ void displayMenu(struct Bintree** root) {
                 printf("Tree freed.\n");
                 break;
             case 5:
+                printf("Enter the interval [a, b] to insert into the deque from the binary tree:\n");
+                printf("a: ");
+                scanf("%d", &a);
+                printf("b: ");
+                scanf("%d", &b);
+                insertIntoDequeInInterval(*root, deque, a, b);
+                printf("Numbers within the interval [%d, %d] inserted into the deque.\n", a, b);
+                break;
+            case 6:
+                printf("Enter the upper bound (b) to insert into the deque from the binary tree: ");
+                scanf("%d", &upperBound);
+                insertIntoDequeInInterval(*root, deque, 0, upperBound);  // Lower bound is always 0
+                printf("Numbers within the interval [0, %d] inserted into the deque.\n", upperBound);
+                break;
+            case 7:
+                printDeque(deque);
+                break;
+            case 8:
                 printf("Exiting program.\n");
                 break;
             default:
                 printf("Invalid choice. Please try again.\n");
         }
-    } while (choice != 5);
+    } while (choice != 8);
 }

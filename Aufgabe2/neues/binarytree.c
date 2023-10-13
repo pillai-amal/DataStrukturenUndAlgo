@@ -27,6 +27,9 @@ void displayMenu(struct Bintree** root, Deque* deque);
 void insertFront(Deque* deque, int data);
 void insertIntoDequeInInterval(struct Bintree* root, Deque* deque, int a, int b);
 void printDeque(Deque* deque);
+struct Bintree* findMin(struct Bintree* root);
+struct Bintree* removeNode(struct Bintree* root, int key);
+void removeAllFromDeque(Deque* deque);
 
 // Main Function
 int main() {
@@ -123,20 +126,78 @@ void printDeque(Deque* deque) {
     printf("\n");
 }
 
+// Helper function to find the minimum element in a binary tree
+struct Bintree* findMin(struct Bintree* root) {
+    while (root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+// Function to remove an element from a binary tree
+struct Bintree* removeNode(struct Bintree* root, int key) {
+    if (root == NULL) {
+        return root; // Element not found, no change
+    }
+
+    if (key < root->data) {
+        root->left = removeNode(root->left, key);
+    } else if (key > root->data) {
+        root->right = removeNode(root->right, key);
+    } else {
+        // Node with the key to be deleted found
+
+        if (root->left == NULL) {
+            struct Bintree* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            struct Bintree* temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        // Node has two children: Get the in-order successor (smallest in the right subtree)
+        struct Bintree* temp = findMin(root->right);
+
+        // Copy the in-order successor's data to this node
+        root->data = temp->data;
+
+        // Delete the in-order successor
+        root->right = removeNode(root->right, temp->data);
+    }
+
+    return root;
+}
+
+void removeAllFromDeque(Deque* deque) {
+    Node* current = deque->front;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    deque->front = NULL;
+    deque->back = NULL;
+    printf("All items removed from the deque.\n");
+}
+
 void displayMenu(struct Bintree** root, Deque* deque) {
     int choice, data, searchValue, upperBound;
-    int a, b; // Declare 'a' and 'b' here
+    int a, b, c; // Declare 'a' and 'b' here
 
     do {
         printf("\nASSIGNMENT II - TREE\n");
-        printf("\n1. Insert data\n");
+        printf("\n1. Insert data into binary tree\n");
         printf("2. Print Tree (Inorder Traversal)\n");
         printf("3. Search for value\n");
         printf("4. Free Tree\n");
         printf("5. Insert numbers in interval [a, b] into Deque\n");
         printf("6. Insert numbers in interval [0, b] into Deque\n");
-        printf("7. Print Deque\n");
-        printf("8. Exit\n");
+        printf("7. Remove all elements that are in the interval (b;c] from the tree by input then to the queue\n");
+        printf("8. Remove all items from the deque\n");
+        printf("9. Print Deque\n");
+        printf("10. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -178,17 +239,32 @@ void displayMenu(struct Bintree** root, Deque* deque) {
             case 6:
                 printf("Enter the upper bound (b) to insert into the deque from the binary tree: ");
                 scanf("%d", &upperBound);
-                insertIntoDequeInInterval(*root, deque, 0, upperBound);  // Lower bound is always 0
+                insertIntoDequeInInterval(*root, deque, 0, upperBound);
                 printf("Numbers within the interval [0, %d] inserted into the deque.\n", upperBound);
                 break;
             case 7:
-                printDeque(deque);
+                printf("Enter the interval (b, c] to remove elements from the tree and insert into the deque:\n");
+                printf("b: ");
+                scanf("%d", &b);
+                printf("c: ");
+                scanf("%d", &c);
+                for (int i = b + 1; i <= c; i++) {
+                    *root = removeNode(*root, i);
+                    insertFront(deque, i);
+                }
+                printf("Elements within the interval (%d, %d] removed from the tree and inserted into the deque.\n", b, c);
                 break;
             case 8:
+                removeAllFromDeque(deque);
+                break;
+            case 9:
+                printDeque(deque);
+                break;
+            case 10:
                 printf("Exiting program.\n");
                 break;
             default:
                 printf("Invalid choice. Please try again.\n");
         }
-    } while (choice != 8);
+    } while (choice != 10);
 }
